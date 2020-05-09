@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FB friend list change</title>
+    <script>
+        const prevFriendList = [];
+        const codeForRetrieve =
+            `let friendNameContainerList = document.querySelectorAll('.fsl.fwb.fcb');\n` +
+            `let friendNameList = [];\n` +
+            `for (let i = 0; i < friendNameContainerList.length; i++) {\n` +
+            `    let friendNameContainer = friendNameContainerList[i];\n` +
+            `    let friendName = friendNameContainer.childNodes[0];\n` +
+            `    friendNameList.push(friendName.textContent);\n` +
+            `}\n` +
+            `console.log(JSON.stringify(friendNameList));`
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('codeForRetrieve').value = codeForRetrieve;
+            document.getElementById('prevFriendList').value = JSON.stringify(prevFriendList);
+        });
+        //
+        const buildList = (list, color) => {
+            return list.map(f => {
+                return `<li>` +
+                    `<a target="_blank" href="https://www.facebook.com/search/top/?q=${f}" style="color: ${color};">${f}</a>` +
+                    `</li>`;
+            }).join('');
+        }
+        const onFindOutClick = () => {
+            const prevFriendList = document.getElementById('prevFriendList').value;
+            const prev = prevFriendList ? JSON.parse(prevFriendList) : [];
+            const currentFriendList = document.getElementById('currentFriendList').value;
+            const current = currentFriendList ? JSON.parse(currentFriendList) : [];
+            //
+            const deleted = prev.filter(f => !current.includes(f));
+            const added = current.filter(f => !prev.includes(f));
+            //
+            document.querySelector('label[for="listOfAdded"]').hidden = false;
+            document.getElementById('listOfAdded').innerHTML = buildList(added, 'green');
+            document.querySelector('label[for="listOfDeleted"]').hidden = false;
+            document.getElementById('listOfDeleted').innerHTML = buildList(deleted, 'red');
+        }
+    </script>
+</head>
+<body>
+<label><b>Open "Friends" page, load all of the friends, run this code in console:</b></label>
+<br>
+<br>
+<textarea id="codeForRetrieve" rows="10" cols="100"></textarea>
+<br>
+<br>
+<label><b>Previous friends list:</b></label>
+<br>
+<br>
+<textarea id="prevFriendList" rows="10" cols="100"></textarea>
+<br>
+<br>
+<label><b>Current friends list:</b></label>
+<br>
+<br>
+<textarea id="currentFriendList" rows="10" cols="100"></textarea>
+<br>
+<br>
+<button onclick="onFindOutClick()">Find out</button>
+<br>
+<br>
+<label for="listOfAdded" hidden>List of added friends:</label>
+<ul id="listOfAdded">
+</ul>
+<br>
+<label for="listOfDeleted" hidden>List of deleted friends:</label>
+<ul id="listOfDeleted">
+</ul>
+</body>
+</html>
